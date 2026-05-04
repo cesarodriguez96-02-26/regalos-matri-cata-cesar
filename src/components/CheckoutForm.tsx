@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { GiftOption, giftOptions } from '@/config/gifts';
 import { GiftCard } from './GiftCard';
 import { formatCLP } from '@/lib/format';
@@ -16,6 +16,18 @@ export function CheckoutForm({ transferDetails }: { transferDetails: string[] })
   const [loading, setLoading] = useState(false);
   const [transferSaved, setTransferSaved] = useState(false);
   const [error, setError] = useState('');
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  function handleGiftSelect(gift: GiftOption) {
+    setSelected(gift);
+
+    window.setTimeout(() => {
+      formRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
+  }
 
   const isValid = useMemo(() => guestName.trim().length >= 3 && /\S+@\S+\.\S+/.test(guestEmail), [guestName, guestEmail]);
 
@@ -68,11 +80,11 @@ export function CheckoutForm({ transferDetails }: { transferDetails: string[] })
 
       <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {giftOptions.map((gift) => (
-          <GiftCard key={gift.id} gift={gift} selected={gift.id === selected.id} onSelect={setSelected} />
+          <GiftCard key={gift.id} gift={gift} selected={gift.id === selected.id} onSelect={handleGiftSelect} />
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-10 rounded-[2rem] bg-white p-6 shadow-2xl shadow-wine/10 md:p-8">
+      <form ref={formRef} onSubmit={handleSubmit} className="scroll-mt-6 mt-10 rounded-[2rem] bg-white p-6 shadow-2xl shadow-wine/10 md:p-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr]">
           <div>
             <h3 className="font-serif text-3xl text-wine">Tu regalo seleccionado</h3>
