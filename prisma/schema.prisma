@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model GiftPurchase {
+  id              String   @id @default(cuid())
+  commerceOrder   String   @unique
+  giftId          String
+  giftTitle       String
+  amount          Int
+  guestName       String
+  guestEmail      String
+  guestMessage    String?
+  paymentMethod   String   @default("flow")
+  status          String   @default("pending") // pending | paid | failed | transfer_pending
+  flowToken       String?
+  flowOrder       String?
+  rawPaymentData  String?
+  createdAt       DateTime @default(now())
+  paidAt          DateTime?
+  updatedAt       DateTime @updatedAt
+}
