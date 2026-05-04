@@ -23,10 +23,10 @@ export default function Home() {
               <div className="flex h-full items-center justify-center rounded-[1.5rem] bg-blush/45 text-center text-sm text-wine/70"><img src="/photos/foto-1.jpg" alt="Catalina y César" className="h-full w-full object-cover object-center transition duration-500 hover:scale-105"/></div>
             </div>
             <div className="mt-12 h-72 rounded-[2rem] bg-white/60 p-3 shadow-xl shadow-wine/10 rotate-[2deg]">
-              <div className="flex h-full items-center justify-center rounded-[1.5rem] bg-sage/25 text-center text-sm text-wine/70"><img src="/photos/foto-2.jpg" alt="Catalina y César 2" className="h-full w-full object-cover object-center transition duration-500 hover:scale-105"/></div>
+              <div className="flex h-full items-center justify-center rounded-[1.5rem] bg-sage/25 text-center text-sm text-wine/70"><img src="/photos/foto-2.jpeg" alt="Catalina y César 2" className="h-full w-full object-cover object-center transition duration-500 hover:scale-105"/></div>
             </div>
             <div className="col-span-2 h-56 rounded-[2rem] bg-white/60 p-3 shadow-xl shadow-wine/10">
-              <div className="flex h-full items-center justify-center rounded-[1.5rem] bg-wine/10 text-center text-sm text-wine/70">Foto horizontal destacada<br />/public/photos/foto-3.jpg</div>
+              <div className="flex h-full items-center justify-center rounded-[1.5rem] bg-wine/10 text-center text-sm text-wine/70"><img src="/photos/foto-2.jpeg" alt="Catalina y César 3" className="h-full w-full object-cover object-center transition duration-500 hover:scale-105"/></div>
             </div>
           </div>
         </div>
