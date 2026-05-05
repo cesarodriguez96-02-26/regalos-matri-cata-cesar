@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { flowGetStatus } from '@/lib/flow';
-import { sendGuestAndOwnerEmails } from '@/lib/email';
+import { syncFlowPayment } from '@/lib/flowSync';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -30,52 +28,13 @@ async function getTokenFromRequest(request: Request) {
 export async function POST(request: Request) {
   const token = await getTokenFromRequest(request);
 
+  // Flow necesita recibir HTTP 200. Si prueba el endpoint sin token, respondemos OK.
   if (!token) {
     return new NextResponse('OK', { status: 200 });
   }
 
-  try {
-    const status = await flowGetStatus(token);
-
-    const purchase = await prisma.giftPurchase.findUnique({
-      where: { commerceOrder: status.commerceOrder }
-    });
-
-    if (!purchase) {
-      return new NextResponse('OK', { status: 200 });
-    }
-
-    const isPaid = status.status === 2;
-    const newStatus =
-      isPaid ? 'paid' : status.status === 3 || status.status === 4 ? 'failed' : 'pending';
-
-    const updated = await prisma.giftPurchase.update({
-      where: { id: purchase.id },
-      data: {
-        status: newStatus,
-        flowToken: token,
-        flowOrder: String(status.flowOrder),
-        rawPaymentData: JSON.stringify(status),
-        paidAt: isPaid && !purchase.paidAt ? new Date() : purchase.paidAt
-      }
-    });
-
-    if (isPaid && purchase.status !== 'paid') {
-      await sendGuestAndOwnerEmails({
-        guestName: updated.guestName,
-        guestEmail: updated.guestEmail,
-        giftTitle: updated.giftTitle,
-        amount: updated.amount,
-        message: updated.guestMessage,
-        commerceOrder: updated.commerceOrder
-      });
-    }
-
-    return new NextResponse('OK', { status: 200 });
-  } catch (error) {
-    console.error('Flow confirmation error:', error);
-    return new NextResponse('OK', { status: 200 });
-  }
+  await syncFlowPayment(token);
+  return new NextResponse('OK', { status: 200 });
 }
 
 export async function GET() {

@@ -40,11 +40,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, purchaseId: purchase.id });
     }
 
-    const siteUrl = (
-      process.env.NEXT_PUBLIC_SITE_URL ??
-      process.env.NEXT_PUBLIC_APP_URL ??
-      'http://localhost:3000'
-    ).replace(/\/$/, '');
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
     const result = await flowPost<{ url: string; token: string; flowOrder?: number }>('/payment/create', {
       commerceOrder,
       subject: `Regalo matrimonio Catalina & César - ${gift.title}`,
