@@ -10,10 +10,20 @@ export type FlowSyncResult = {
   error?: string;
 };
 
-function mapFlowStatus(status: number) {
-  // Flow: 1 pendiente, 2 pagada, 3 rechazada, 4 anulada
-  if (status === 2) return 'paid';
-  if (status === 3 || status === 4) return 'failed';
+function mapFlowStatus(status: unknown): 'paid' | 'failed' | 'pending' {
+  // Flow normalmente usa: 1 pendiente, 2 pagada, 3 rechazada, 4 anulada.
+  // Lo convertimos a Number para cubrir respuestas como "2".
+  const numericStatus = Number(status);
+
+  if (numericStatus === 2) return 'paid';
+  if (numericStatus === 3 || numericStatus === 4) return 'failed';
+  return 'pending';
+}
+
+function normalizeStoredStatus(status?: string | null): FlowSyncResult['status'] {
+  if (status === 'paid') return 'paid';
+  if (status === 'failed') return 'failed';
+  if (status === 'pending' || status === 'transfer_pending') return 'pending';
   return 'pending';
 }
 
@@ -22,18 +32,18 @@ export async function syncFlowPayment(token: string): Promise<FlowSyncResult> {
     return { ok: false, status: 'error', error: 'missing token' };
   }
 
+  const purchaseByToken = await prisma.giftPurchase.findFirst({
+    where: { flowToken: token }
+  });
+
   try {
     const flowStatus = await flowGetStatus(token);
-    const commerceOrder = String(flowStatus.commerceOrder ?? '');
-    const flowOrder = String(flowStatus.flowOrder ?? '');
+    const commerceOrder = String(flowStatus.commerceOrder ?? purchaseByToken?.commerceOrder ?? '');
+    const flowOrder = String(flowStatus.flowOrder ?? purchaseByToken?.flowOrder ?? '');
 
-    if (!commerceOrder) {
-      return { ok: false, status: 'error', error: 'missing commerceOrder' };
-    }
-
-    const purchase = await prisma.giftPurchase.findUnique({
-      where: { commerceOrder }
-    });
+    const purchase = commerceOrder
+      ? await prisma.giftPurchase.findUnique({ where: { commerceOrder } })
+      : purchaseByToken;
 
     if (!purchase) {
       return { ok: false, status: 'not_found', commerceOrder, flowOrder };
@@ -64,6 +74,7 @@ export async function syncFlowPayment(token: string): Promise<FlowSyncResult> {
           commerceOrder: updated.commerceOrder
         });
       } catch (emailError) {
+        // El pago no debe fallar por un problema de correo.
         console.error('Error enviando correos de confirmación:', emailError);
       }
     }
@@ -71,11 +82,24 @@ export async function syncFlowPayment(token: string): Promise<FlowSyncResult> {
     return {
       ok: true,
       status: newStatus,
-      commerceOrder,
+      commerceOrder: updated.commerceOrder,
       flowOrder
     };
   } catch (error) {
     console.error('Error sincronizando pago Flow:', error);
+
+    // Si Flow confirmó por webhook antes que el usuario volviera a la web,
+    // evitamos mostrar error y usamos el estado que ya está guardado en BD.
+    if (purchaseByToken) {
+      return {
+        ok: false,
+        status: normalizeStoredStatus(purchaseByToken.status),
+        commerceOrder: purchaseByToken.commerceOrder,
+        flowOrder: purchaseByToken.flowOrder ?? undefined,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+
     return {
       ok: false,
       status: 'error',

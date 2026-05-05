@@ -5,6 +5,10 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 async function getTokenFromRequest(request: Request) {
+  const url = new URL(request.url);
+  const tokenFromQuery = url.searchParams.get('token');
+  if (tokenFromQuery) return tokenFromQuery;
+
   const contentType = request.headers.get('content-type') ?? '';
 
   if (contentType.includes('application/json')) {
@@ -25,18 +29,21 @@ async function getTokenFromRequest(request: Request) {
   return String(params.get('token') ?? '');
 }
 
-export async function POST(request: Request) {
+async function confirm(request: Request) {
   const token = await getTokenFromRequest(request);
 
-  // Flow necesita recibir HTTP 200. Si prueba el endpoint sin token, respondemos OK.
-  if (!token) {
-    return new NextResponse('OK', { status: 200 });
+  // Flow exige HTTP 200. Si prueba el endpoint sin token, respondemos OK.
+  if (token) {
+    await syncFlowPayment(token);
   }
 
-  await syncFlowPayment(token);
   return new NextResponse('OK', { status: 200 });
 }
 
-export async function GET() {
-  return new NextResponse('OK', { status: 200 });
+export async function POST(request: Request) {
+  return confirm(request);
+}
+
+export async function GET(request: Request) {
+  return confirm(request);
 }

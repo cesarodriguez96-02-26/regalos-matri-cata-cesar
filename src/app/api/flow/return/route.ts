@@ -39,7 +39,7 @@ function getBaseUrl() {
 
 async function redirectAfterFlow(request: Request) {
   const token = await getTokenFromRequest(request);
-  let status = 'pending';
+  let status: 'paid' | 'failed' | 'pending' | 'not_found' | 'error' = 'pending';
 
   if (token) {
     const result = await syncFlowPayment(token);
