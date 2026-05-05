@@ -4,16 +4,21 @@ import { syncFlowPayment } from '@/lib/flowSync';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-async function getTokenFromRequest(request: Request) {
+async function getFlowDataFromRequest(request: Request) {
   const url = new URL(request.url);
-  const tokenFromQuery = url.searchParams.get('token');
-  if (tokenFromQuery) return tokenFromQuery;
+  const commerceOrder = url.searchParams.get('commerceOrder') ?? '';
+  const tokenFromQuery = url.searchParams.get('token') ?? '';
+
+  if (tokenFromQuery) return { token: tokenFromQuery, commerceOrder };
 
   const contentType = request.headers.get('content-type') ?? '';
 
   if (contentType.includes('application/json')) {
     const body = await request.json().catch(() => null);
-    return String(body?.token ?? '');
+    return {
+      token: String(body?.token ?? ''),
+      commerceOrder: String(body?.commerceOrder ?? commerceOrder ?? '')
+    };
   }
 
   if (
@@ -21,12 +26,18 @@ async function getTokenFromRequest(request: Request) {
     contentType.includes('multipart/form-data')
   ) {
     const formData = await request.formData().catch(() => null);
-    return String(formData?.get('token') ?? '');
+    return {
+      token: String(formData?.get('token') ?? ''),
+      commerceOrder: String(formData?.get('commerceOrder') ?? commerceOrder ?? '')
+    };
   }
 
   const text = await request.text().catch(() => '');
   const params = new URLSearchParams(text);
-  return String(params.get('token') ?? '');
+  return {
+    token: String(params.get('token') ?? ''),
+    commerceOrder: String(params.get('commerceOrder') ?? commerceOrder ?? '')
+  };
 }
 
 function getBaseUrl() {
@@ -38,20 +49,19 @@ function getBaseUrl() {
 }
 
 async function redirectAfterFlow(request: Request) {
-  const token = await getTokenFromRequest(request);
+  const { token, commerceOrder } = await getFlowDataFromRequest(request);
   let status: 'paid' | 'failed' | 'pending' | 'not_found' | 'error' = 'pending';
 
-  if (token) {
-    const result = await syncFlowPayment(token);
+  if (token || commerceOrder) {
+    const result = await syncFlowPayment({ token, commerceOrder });
     status = result.status;
   }
 
   const url = new URL('/gracias', getBaseUrl());
   url.searchParams.set('status', status);
 
-  if (token) {
-    url.searchParams.set('token', token);
-  }
+  if (commerceOrder) url.searchParams.set('commerceOrder', commerceOrder);
+  if (token) url.searchParams.set('token', token);
 
   return NextResponse.redirect(url, 303);
 }

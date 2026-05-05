@@ -96,7 +96,10 @@ export type FlowPaymentStatus = {
 };
 
 export async function flowGetStatus(token: string) {
-  // Importante: Flow consulta el estado de pago con GET /payment/getStatus.
-  // Usarlo como POST puede dejar el pago como pending en nuestra BD aunque Flow lo apruebe.
   return flowGet<FlowPaymentStatus>('/payment/getStatus', { token });
+}
+
+export async function flowGetStatusByCommerceId(commerceOrder: string) {
+  // Flow llama a este parámetro commerceId, aunque en nuestro sistema lo llamamos commerceOrder.
+  return flowGet<FlowPaymentStatus>('/payment/getStatusByCommerceId', { commerceId: commerceOrder });
 }

@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { giftOptions } from '@/config/gifts';
 import { prisma } from '@/lib/prisma';
-import { flowPost } from '@/lib/flow-old';
+import { flowPost } from '@/lib/flow';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const schema = z.object({
   giftId: z.string(),
@@ -13,6 +14,14 @@ const schema = z.object({
   guestMessage: z.string().max(1200).optional().nullable(),
   paymentMethod: z.enum(['flow', 'transfer'])
 });
+
+function getBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    'http://localhost:3000'
+  ).replace(/\/$/, '');
+}
 
 export async function POST(request: Request) {
   try {
@@ -40,11 +49,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, purchaseId: purchase.id });
     }
 
-    const siteUrl = (
-      process.env.NEXT_PUBLIC_SITE_URL ??
-      process.env.NEXT_PUBLIC_APP_URL ??
-      'http://localhost:3000'
-    ).replace(/\/$/, '');
+    const siteUrl = getBaseUrl();
+    const confirmationUrl = new URL('/api/flow/confirm', siteUrl);
+    confirmationUrl.searchParams.set('commerceOrder', commerceOrder);
+
+    const returnUrl = new URL('/api/flow/return', siteUrl);
+    returnUrl.searchParams.set('commerceOrder', commerceOrder);
+
     const result = await flowPost<{ url: string; token: string; flowOrder?: number }>('/payment/create', {
       commerceOrder,
       subject: `Regalo matrimonio Catalina & César - ${gift.title}`,
@@ -52,8 +63,9 @@ export async function POST(request: Request) {
       amount: gift.amount,
       email: input.guestEmail,
       paymentMethod: 9,
-      urlConfirmation: `${siteUrl}/api/flow/confirm`,
-      urlReturn: `${siteUrl}/api/flow/return`
+      urlConfirmation: confirmationUrl.toString(),
+      urlReturn: returnUrl.toString(),
+      optional: JSON.stringify({ commerceOrder, purchaseId: purchase.id })
     });
 
     await prisma.giftPurchase.update({

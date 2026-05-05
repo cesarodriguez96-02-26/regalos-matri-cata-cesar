@@ -4,16 +4,21 @@ import { syncFlowPayment } from '@/lib/flowSync';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-async function getTokenFromRequest(request: Request) {
+async function getFlowDataFromRequest(request: Request) {
   const url = new URL(request.url);
-  const tokenFromQuery = url.searchParams.get('token');
-  if (tokenFromQuery) return tokenFromQuery;
+  const commerceOrder = url.searchParams.get('commerceOrder') ?? '';
+  const tokenFromQuery = url.searchParams.get('token') ?? '';
+
+  if (tokenFromQuery) return { token: tokenFromQuery, commerceOrder };
 
   const contentType = request.headers.get('content-type') ?? '';
 
   if (contentType.includes('application/json')) {
     const body = await request.json().catch(() => null);
-    return String(body?.token ?? '');
+    return {
+      token: String(body?.token ?? ''),
+      commerceOrder: String(body?.commerceOrder ?? commerceOrder ?? '')
+    };
   }
 
   if (
@@ -21,29 +26,32 @@ async function getTokenFromRequest(request: Request) {
     contentType.includes('multipart/form-data')
   ) {
     const formData = await request.formData().catch(() => null);
-    return String(formData?.get('token') ?? '');
+    return {
+      token: String(formData?.get('token') ?? ''),
+      commerceOrder: String(formData?.get('commerceOrder') ?? commerceOrder ?? '')
+    };
   }
 
   const text = await request.text().catch(() => '');
   const params = new URLSearchParams(text);
-  return String(params.get('token') ?? '');
-}
-
-async function confirm(request: Request) {
-  const token = await getTokenFromRequest(request);
-
-  // Flow exige HTTP 200. Si prueba el endpoint sin token, respondemos OK.
-  if (token) {
-    await syncFlowPayment(token);
-  }
-
-  return new NextResponse('OK', { status: 200 });
+  return {
+    token: String(params.get('token') ?? ''),
+    commerceOrder: String(params.get('commerceOrder') ?? commerceOrder ?? '')
+  };
 }
 
 export async function POST(request: Request) {
-  return confirm(request);
+  try {
+    const { token, commerceOrder } = await getFlowDataFromRequest(request);
+    await syncFlowPayment({ token, commerceOrder });
+  } catch (error) {
+    console.error('Flow confirmation error:', error);
+  }
+
+  // Flow exige HTTP 200 aunque exista un error interno; el error queda en los logs.
+  return new NextResponse('OK', { status: 200 });
 }
 
-export async function GET(request: Request) {
-  return confirm(request);
+export async function GET() {
+  return new NextResponse('OK', { status: 200 });
 }
