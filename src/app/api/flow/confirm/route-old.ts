@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { flowGetStatus } from '@/lib/flow';
+import { flowGetStatus } from '@/lib/flow-old';
 import { sendGuestAndOwnerEmails } from '@/lib/email';
 
 export const runtime = 'nodejs';

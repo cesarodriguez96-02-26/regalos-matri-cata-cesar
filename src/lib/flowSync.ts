@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma';
-import { flowGetStatus } from '@/lib/flow';
+import { flowGetStatus } from '@/lib/flow-old';
 import { sendGuestAndOwnerEmails } from '@/lib/email';
 
 export type FlowSyncResult = {

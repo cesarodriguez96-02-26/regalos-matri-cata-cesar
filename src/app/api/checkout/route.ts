@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { giftOptions } from '@/config/gifts';
 import { prisma } from '@/lib/prisma';
-import { flowPost } from '@/lib/flow';
+import { flowPost } from '@/lib/flow-old';
 
 export const runtime = 'nodejs';
 

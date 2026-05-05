@@ -20,25 +20,28 @@ export function signFlowParams(params: FlowParams, secretKey: string) {
   return crypto.createHmac('sha256', secretKey).update(sorted).digest('hex');
 }
 
-export async function flowPost<T>(path: string, params: FlowParams): Promise<T> {
+function getFlowConfig() {
   const apiKey = process.env.FLOW_API_KEY;
   const secretKey = process.env.FLOW_SECRET_KEY;
-  const baseUrl = process.env.FLOW_BASE_URL ?? 'https://sandbox.flow.cl/api';
+  const baseUrl = (process.env.FLOW_BASE_URL ?? 'https://sandbox.flow.cl/api').replace(/\/$/, '');
 
-  if (!apiKey || !secretKey) throw new Error('Faltan FLOW_API_KEY o FLOW_SECRET_KEY en .env');
+  if (!apiKey || !secretKey) {
+    throw new Error('Faltan FLOW_API_KEY o FLOW_SECRET_KEY en las variables de entorno.');
+  }
 
+  return { apiKey, secretKey, baseUrl };
+}
+
+function buildSignedParams(params: FlowParams) {
+  const { apiKey, secretKey } = getFlowConfig();
   const payload = cleanParams({ ...params, apiKey });
   const signature = signFlowParams(payload, secretKey);
-  const body = new URLSearchParams({ ...payload, s: signature });
+  return new URLSearchParams({ ...payload, s: signature });
+}
 
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body,
-    cache: 'no-store'
-  });
-
+async function parseFlowResponse<T>(response: Response): Promise<T> {
   const text = await response.text();
+
   let json: unknown;
   try {
     json = JSON.parse(text);
@@ -53,16 +56,47 @@ export async function flowPost<T>(path: string, params: FlowParams): Promise<T> 
   return json as T;
 }
 
+export async function flowPost<T>(path: string, params: FlowParams): Promise<T> {
+  const { baseUrl } = getFlowConfig();
+  const body = buildSignedParams(params);
+
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+    cache: 'no-store'
+  });
+
+  return parseFlowResponse<T>(response);
+}
+
+export async function flowGet<T>(path: string, params: FlowParams): Promise<T> {
+  const { baseUrl } = getFlowConfig();
+  const query = buildSignedParams(params);
+
+  const response = await fetch(`${baseUrl}${path}?${query.toString()}`, {
+    method: 'GET',
+    cache: 'no-store'
+  });
+
+  return parseFlowResponse<T>(response);
+}
+
+export type FlowPaymentStatus = {
+  flowOrder: number | string;
+  commerceOrder: string;
+  requestDate?: string;
+  status: number | string; // 1 pendiente, 2 pagada, 3 rechazada, 4 anulada
+  subject?: string;
+  currency?: string;
+  amount?: number;
+  payer?: string;
+  paymentData?: unknown;
+  optional?: unknown;
+};
+
 export async function flowGetStatus(token: string) {
-  return flowPost<{
-    flowOrder: number;
-    commerceOrder: string;
-    requestDate: string;
-    status: number; // 1 pendiente, 2 pagada, 3 rechazada, 4 anulada
-    subject: string;
-    currency: string;
-    amount: number;
-    payer: string;
-    paymentData?: unknown;
-  }>('/payment/getStatus', { token });
+  // Importante: Flow consulta el estado de pago con GET /payment/getStatus.
+  // Usarlo como POST puede dejar el pago como pending en nuestra BD aunque Flow lo apruebe.
+  return flowGet<FlowPaymentStatus>('/payment/getStatus', { token });
 }
