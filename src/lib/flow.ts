@@ -26,7 +26,12 @@ function getFlowConfig() {
   const baseUrl = (process.env.FLOW_BASE_URL ?? 'https://sandbox.flow.cl/api').replace(/\/$/, '');
 
   if (!apiKey || !secretKey) {
-    throw new Error('Faltan FLOW_API_KEY o FLOW_SECRET_KEY en las variables de entorno.');
+    throw new Error('Faltan credenciales de Flow en las variables de entorno.');
+  }
+
+  const parsedBase = new URL(baseUrl);
+  if (parsedBase.protocol !== 'https:' || !(parsedBase.hostname === 'flow.cl' || parsedBase.hostname.endsWith('.flow.cl'))) {
+    throw new Error('FLOW_BASE_URL debe apuntar a un dominio HTTPS de Flow.');
   }
 
   return { apiKey, secretKey, baseUrl };
@@ -41,16 +46,20 @@ function buildSignedParams(params: FlowParams) {
 
 async function parseFlowResponse<T>(response: Response): Promise<T> {
   const text = await response.text();
-
   let json: unknown;
+
   try {
     json = JSON.parse(text);
   } catch {
-    throw new Error(`Respuesta no JSON desde Flow: ${text}`);
+    throw new Error(`Flow respondió con un formato inesperado (HTTP ${response.status}).`);
   }
 
   if (!response.ok) {
-    throw new Error(`Error Flow ${response.status}: ${JSON.stringify(json)}`);
+    const detail =
+      typeof json === 'object' && json !== null && 'message' in json && typeof (json as { message?: unknown }).message === 'string'
+        ? ` ${(json as { message: string }).message}`
+        : '';
+    throw new Error(`Flow rechazó la solicitud (HTTP ${response.status}).${detail}`);
   }
 
   return json as T;
@@ -59,27 +68,29 @@ async function parseFlowResponse<T>(response: Response): Promise<T> {
 export async function flowPost<T>(path: string, params: FlowParams): Promise<T> {
   const { baseUrl } = getFlowConfig();
   const body = buildSignedParams(params);
-
   const response = await fetch(`${baseUrl}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body,
     cache: 'no-store'
   });
-
   return parseFlowResponse<T>(response);
 }
 
 export async function flowGet<T>(path: string, params: FlowParams): Promise<T> {
   const { baseUrl } = getFlowConfig();
   const query = buildSignedParams(params);
-
-  const response = await fetch(`${baseUrl}${path}?${query.toString()}`, {
-    method: 'GET',
-    cache: 'no-store'
-  });
-
+  const response = await fetch(`${baseUrl}${path}?${query.toString()}`, { method: 'GET', cache: 'no-store' });
   return parseFlowResponse<T>(response);
+}
+
+export function buildFlowPaymentUrl(base: string, token: string) {
+  const url = new URL(base);
+  if (url.protocol !== 'https:' || !(url.hostname === 'flow.cl' || url.hostname.endsWith('.flow.cl'))) {
+    throw new Error('Flow devolvió una URL de pago no permitida.');
+  }
+  url.searchParams.set('token', token);
+  return url.toString();
 }
 
 export type FlowPaymentStatus = {
@@ -100,6 +111,5 @@ export async function flowGetStatus(token: string) {
 }
 
 export async function flowGetStatusByCommerceId(commerceOrder: string) {
-  // Flow llama a este parámetro commerceId, aunque en nuestro sistema lo llamamos commerceOrder.
   return flowGet<FlowPaymentStatus>('/payment/getStatusByCommerceId', { commerceId: commerceOrder });
 }

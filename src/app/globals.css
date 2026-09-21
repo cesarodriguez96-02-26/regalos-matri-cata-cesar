@@ -2,6 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-html { scroll-behavior: smooth; }
-body { background: #F9F4ED; color: #2D2626; }
-::selection { background: #E9C7C6; }
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(169, 121, 40, 0.10), transparent 26rem),
+    radial-gradient(circle at 92% 18%, rgba(10, 52, 86, 0.08), transparent 28rem),
+    #F7F2E8;
+  color: #14283B;
+}
+
+::selection {
+  background: #D7BC85;
+  color: #052742;
+}
+
+.ticket-edge {
+  position: relative;
+}
+
+.ticket-edge::before,
+.ticket-edge::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  background: #F7F2E8;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.ticket-edge::before { left: -12px; }
+.ticket-edge::after { right: -12px; }
+
+.flight-line {
+  position: relative;
+  height: 20px;
+}
+
+.flight-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 32px;
+  top: 50%;
+  border-top: 1px dashed rgba(10, 52, 86, 0.38);
+}
+
+.flight-line::after {
+  content: '✈';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  color: #A97928;
+  font-size: 18px;
+  transform: translateY(-58%) rotate(4deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

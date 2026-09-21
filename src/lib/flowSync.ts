@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import { flowGetStatus, flowGetStatusByCommerceId, type FlowPaymentStatus } from '@/lib/flow';
-import { sendGuestAndOwnerEmails } from '@/lib/email';
+import { sendGiftConfirmedEmails } from '@/lib/email';
 
 export type FlowSyncResult = {
   ok: boolean;
@@ -17,7 +17,6 @@ export type FlowSyncInput = {
 
 function mapFlowStatus(status: unknown): 'paid' | 'failed' | 'pending' {
   const numericStatus = Number(status);
-
   if (numericStatus === 2) return 'paid';
   if (numericStatus === 3 || numericStatus === 4) return 'failed';
   return 'pending';
@@ -27,6 +26,17 @@ function normalizeStoredStatus(status?: string | null): FlowSyncResult['status']
   if (status === 'paid') return 'paid';
   if (status === 'failed') return 'failed';
   return 'pending';
+}
+
+function safePaymentSnapshot(flowStatus: FlowPaymentStatus) {
+  return JSON.stringify({
+    flowOrder: flowStatus.flowOrder,
+    commerceOrder: flowStatus.commerceOrder,
+    requestDate: flowStatus.requestDate,
+    status: flowStatus.status,
+    currency: flowStatus.currency,
+    amount: flowStatus.amount
+  });
 }
 
 async function tryGetFlowStatus(input: FlowSyncInput, storedToken?: string | null) {
@@ -83,35 +93,81 @@ export async function syncFlowPayment(input: string | FlowSyncInput): Promise<Fl
       };
     }
 
+    if (finalCommerceOrder !== finalPurchase.commerceOrder) {
+      throw new Error('La orden reportada por Flow no coincide con la orden almacenada.');
+    }
+
     const newStatus = mapFlowStatus(flowStatus.status);
-    const wasAlreadyPaid = finalPurchase.status === 'paid';
-    const tokenToStore = token ?? finalPurchase.flowToken;
+    const flowAmount = Number(flowStatus.amount);
+
+    if (newStatus === 'paid') {
+      if (!Number.isFinite(flowAmount) || flowAmount !== finalPurchase.amount) {
+        throw new Error('El monto confirmado por Flow no coincide con el monto del regalo.');
+      }
+      if (flowStatus.currency && flowStatus.currency !== 'CLP') {
+        throw new Error('La moneda confirmada por Flow no coincide con CLP.');
+      }
+    }
+
+    const commonData = {
+      flowToken: token ?? finalPurchase.flowToken,
+      flowOrder: finalFlowOrder || finalPurchase.flowOrder,
+      rawPaymentData: safePaymentSnapshot(flowStatus)
+    };
+
+    if (newStatus === 'paid') {
+      const transitioned = await prisma.giftPurchase.updateMany({
+        where: { id: finalPurchase.id, status: { not: 'paid' } },
+        data: {
+          ...commonData,
+          status: 'paid',
+          paidAt: finalPurchase.paidAt ?? new Date()
+        }
+      });
+
+      const updated = await prisma.giftPurchase.findUnique({ where: { id: finalPurchase.id } });
+      if (!updated) throw new Error('No se pudo recuperar la orden actualizada.');
+
+      if (transitioned.count === 1) {
+        try {
+          await sendGiftConfirmedEmails({
+            guestName: updated.guestName,
+            guestEmail: updated.guestEmail,
+            giftTitle: updated.giftTitle,
+            amount: updated.amount,
+            message: updated.guestMessage,
+            commerceOrder: updated.commerceOrder
+          });
+          await prisma.giftPurchase.update({
+            where: { id: updated.id },
+            data: { notificationSentAt: new Date() }
+          });
+        } catch (emailError) {
+          console.error('Error enviando correos de confirmación:', emailError);
+        }
+      }
+
+      return {
+        ok: true,
+        status: 'paid',
+        commerceOrder: updated.commerceOrder,
+        flowOrder: finalFlowOrder || undefined
+      };
+    }
+
+    if (finalPurchase.status === 'paid') {
+      return {
+        ok: true,
+        status: 'paid',
+        commerceOrder: finalPurchase.commerceOrder,
+        flowOrder: finalPurchase.flowOrder ?? undefined
+      };
+    }
 
     const updated = await prisma.giftPurchase.update({
       where: { id: finalPurchase.id },
-      data: {
-        status: newStatus,
-        flowToken: tokenToStore,
-        flowOrder: finalFlowOrder || finalPurchase.flowOrder,
-        rawPaymentData: JSON.stringify(flowStatus),
-        paidAt: newStatus === 'paid' && !finalPurchase.paidAt ? new Date() : finalPurchase.paidAt
-      }
+      data: { ...commonData, status: newStatus }
     });
-
-    if (newStatus === 'paid' && !wasAlreadyPaid) {
-      try {
-        await sendGuestAndOwnerEmails({
-          guestName: updated.guestName,
-          guestEmail: updated.guestEmail,
-          giftTitle: updated.giftTitle,
-          amount: updated.amount,
-          message: updated.guestMessage,
-          commerceOrder: updated.commerceOrder
-        });
-      } catch (emailError) {
-        console.error('Error enviando correos de confirmación:', emailError);
-      }
-    }
 
     return {
       ok: true,
