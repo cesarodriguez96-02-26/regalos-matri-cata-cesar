@@ -6,12 +6,13 @@ import { sendGiftConfirmedEmails } from '@/lib/email';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!isAdminRequest(request)) {
     return NextResponse.json({ error: 'No autorizado.' }, { status: 401 });
   }
 
-  const purchase = await prisma.giftPurchase.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const purchase = await prisma.giftPurchase.findUnique({ where: { id } });
   if (!purchase || purchase.paymentMethod !== 'transfer') {
     return NextResponse.json({ error: 'Transferencia no encontrada.' }, { status: 404 });
   }

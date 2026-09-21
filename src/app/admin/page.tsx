@@ -31,7 +31,8 @@ function formatDate(date: Date) {
 }
 
 export default async function AdminPage() {
-  const authorized = verifyAdminSession(cookies().get(ADMIN_COOKIE_NAME)?.value);
+  const cookieStore = await cookies();
+  const authorized = verifyAdminSession(cookieStore.get(ADMIN_COOKIE_NAME)?.value);
 
   if (!authorized) {
     return (

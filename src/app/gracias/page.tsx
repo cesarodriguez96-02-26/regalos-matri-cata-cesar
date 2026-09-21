@@ -1,5 +1,5 @@
 type GraciasPageProps = {
-  searchParams?: { status?: string };
+  searchParams?: Promise<{ status?: string | string[] }>;
 };
 
 const contentByStatus = {
@@ -40,8 +40,10 @@ const contentByStatus = {
   }
 };
 
-export default function GraciasPage({ searchParams }: GraciasPageProps) {
-  const status = searchParams?.status ?? 'pending';
+export default async function GraciasPage({ searchParams }: GraciasPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const rawStatus = resolvedSearchParams?.status;
+  const status = Array.isArray(rawStatus) ? rawStatus[0] ?? 'pending' : rawStatus ?? 'pending';
   const content = contentByStatus[status as keyof typeof contentByStatus] ?? contentByStatus.pending;
 
   return (
