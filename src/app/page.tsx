@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { CheckoutForm } from '@/components/CheckoutForm';
 import { WeddingCountdown } from '@/components/WeddingCountdown';
+import { SectionNavigation } from '@/components/SectionNavigation';
 
 // Iconos discretos para acompañar la estética de la invitación.
 function WhatsAppIcon() {
@@ -40,8 +41,9 @@ const photos = [
 
 export default function Home() {
   return (
-    <main className="overflow-hidden">
-      <section className="px-5 pb-10 pt-8 md:pb-14 md:pt-12">
+    <main className="overflow-hidden pt-16">
+      <SectionNavigation />
+      <section id="inicio" className="scroll-mt-20 px-5 pb-10 pt-8 md:pb-14 md:pt-12">
         <div className="mx-auto max-w-6xl">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-navy/70 sm:tracking-[0.28em]">
             <span>El viaje más importante de nuestras vidas</span>
@@ -67,7 +69,7 @@ export default function Home() {
                 </h1>
                 <div className="mx-auto mt-5 max-w-sm flight-line" aria-hidden="true" />
                 <div className="mx-auto mt-7 flex items-center justify-center gap-3 text-gold" aria-hidden="true"><span className="h-px w-12 bg-gold/30" /><span className="font-serif text-xl">♡</span><span className="h-px w-12 bg-gold/30" /></div>
-                <div className="mx-auto mt-5 max-w-[43rem] space-y-6 text-left text-base leading-8 text-ink/80 sm:text-center md:text-lg md:leading-9">
+                <div className="mx-auto mt-5 max-w-[43rem] space-y-3 text-left text-base leading-6 text-ink/80 sm:text-center md:space-y-4 md:text-lg md:leading-7">
                   <p>Nuestra historia comenzó en <strong className="font-semibold text-navy">junio de 2022</strong>, cuando nuestros caminos se cruzaron casi sin aviso, pero con la sensación de que algo muy bonito estaba por empezar.</p>
                   <p>Desde entonces, hemos crecido juntos, compartido risas, descubierto nuevos lugares y llenado nuestra vida de momentos que hoy forman parte de lo que somos. Cada viaje, cada celebración y cada desafío nos ha confirmado que queremos seguir eligiéndonos.</p>
                   <p>Hoy estamos listos para escribir el capítulo más importante de nuestra historia: <strong className="font-semibold text-navy">nuestro matrimonio</strong>. Y no imaginamos este momento sin las personas que más queremos.</p>
@@ -80,7 +82,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="px-5 py-10 md:py-14">
+      <section id="recuerdos" className="scroll-mt-20 px-5 py-10 md:py-14">
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto mb-9 max-w-2xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-gold">Nuestra aventura hasta aquí</p>
@@ -98,7 +100,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="px-5 py-14 md:py-20" aria-labelledby="proxima-aventura">
+      <section id="invitacion" className="scroll-mt-20 px-5 py-14 md:py-20" aria-labelledby="proxima-aventura">
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto mb-9 max-w-3xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-gold">Tarjeta de embarque</p>
