@@ -4,7 +4,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Matri Cata&César',
   description: 'Acompáñanos en el viaje más importante de nuestras vidas. Cata & César · 26 de febrero de 2027.',
-  icons: { icon: '/icon.svg', shortcut: '/icon.svg' },
+  icons: { icon: '/icon.svg?v=2', shortcut: '/icon.svg?v=2' },
   robots: {
     index: false,
     follow: false,
