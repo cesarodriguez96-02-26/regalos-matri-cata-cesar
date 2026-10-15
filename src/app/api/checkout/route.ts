@@ -12,7 +12,7 @@ const schema = z.object({
   items: z.array(z.object({
     giftId: z.string().trim().min(1).max(80),
     quantity: z.number().int().min(1).max(20)
-  })).min(1).max(10),
+  })).min(1).max(giftOptions.length),
   guestName: z.string().trim().min(3).max(120),
   guestEmail: z.string().trim().email().max(180).transform((value) => value.toLowerCase()),
   guestMessage: z.string().trim().max(1200).optional().nullable(),
