@@ -68,7 +68,6 @@ export default function Home() {
                   Cata &amp; César
                 </h1>
                 <div className="mx-auto mt-5 max-w-sm flight-line" aria-hidden="true" />
-                <div className="mx-auto mt-7 flex items-center justify-center gap-3 text-gold" aria-hidden="true"><span className="h-px w-12 bg-gold/30" /><span className="font-serif text-xl">♡</span><span className="h-px w-12 bg-gold/30" /></div>
                 <div className="mx-auto mt-5 max-w-[43rem] space-y-3 text-left text-base leading-6 text-ink/80 sm:text-center md:space-y-4 md:text-lg md:leading-7">
                   <p>Nuestra historia comenzó en <strong className="font-semibold text-navy">junio de 2022</strong>, cuando nuestros caminos se cruzaron casi sin aviso, pero con la sensación de que algo muy bonito estaba por comenzar.</p>
                   <p>Desde entonces, hemos crecido juntos, compartido risas, descubierto nuevos lugares y coleccionado recuerdos que nos acompañarán siempre. Entre viajes, aventuras y desafíos, descubrimos que lo más bonito de este camino es seguir eligiéndonos cada día.</p>
