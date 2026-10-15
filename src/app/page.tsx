@@ -105,7 +105,7 @@ export default function Home() {
           <div className="mx-auto mb-9 max-w-3xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-gold">Tarjeta de embarque</p>
             <h2 id="proxima-aventura" className="mt-3 font-serif text-4xl text-navy md:text-5xl">Nuestra próxima aventura</h2>
-            <p className="mt-4 text-base leading-7 text-ink/70">¡El destino es celebrar juntos! Aquí tienes todos los detalles para acompañarnos.</p>
+            <p className="mt-4 text-base leading-7 text-ink/70">En nuestra próxima aventura. ¡Lo importante es celebrar juntos! Aquí tienes todos los detalles para acompañarnos.</p>
           </div>
           <div className="ticket-edge overflow-hidden rounded-[2rem] border border-navy/10 bg-ivory shadow-ticket">
             <div className="grid gap-6 bg-navy px-6 py-8 text-white sm:grid-cols-3 sm:px-10">
