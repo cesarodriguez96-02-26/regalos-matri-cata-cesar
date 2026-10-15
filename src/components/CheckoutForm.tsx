@@ -56,12 +56,33 @@ export function CheckoutForm() {
           <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-ink/75">
             El regalo que más ilusión nos hace es compartir este día contigo. Si además quieres hacernos un obsequio simbólico para nuestro nuevo capítulo juntos, te dejamos nuestra lista de deseos.
           </p>
-          <div className="mt-6 rounded-2xl border border-gold/25 bg-ivory px-5 py-4 text-left text-sm leading-7 text-ink/75 sm:text-center">
-            <strong className="text-navy">¿Cómo funciona?</strong> 1. Elige uno o varios regalos usando los botones + y − para ajustar sus cantidades. 2. Revisa tu selección y el total. 3. Ingresa tus datos y presiona <strong>Continuar al pago seguro</strong> para pagar con tarjeta de débito o crédito.
+          <div className="mt-7 rounded-[1.75rem] border border-gold/25 bg-ivory p-5 text-left sm:p-7">
+            <h3 className="text-center font-serif text-2xl text-navy">¿Cómo funciona?</h3>
+            <ol className="mt-5 grid gap-3 text-sm leading-6 text-ink/75 sm:grid-cols-2">
+              {[
+                ['Paso 1', 'Elige uno o varios regalos y ajusta sus cantidades con los botones + y −.'],
+                ['Paso 2', 'Revisa los regalos seleccionados y comprueba el monto total.'],
+                ['Paso 3', 'Completa tu nombre, tu correo y, si quieres, déjanos un mensaje.'],
+                ['Paso 4', 'Continúa al pago seguro para pagar con tarjeta de débito o crédito mediante Flow.']
+              ].map(([step, description]) => (
+                <li key={step} className="rounded-2xl border border-navy/10 bg-white/80 p-4">
+                  <strong className="block text-xs uppercase tracking-[0.12em] text-gold">{step}</strong>
+                  <p className="mt-2">{description}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 flex flex-wrap items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold text-sm font-bold text-white">1</span>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-gold">Paso 1</p>
+            <h3 className="font-serif text-2xl text-navy sm:text-3xl">Elige tus regalos</h3>
+          </div>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-ink/70">Puedes elegir uno o más regalos y sumar varias unidades de cada uno. Usa los botones + y − de las tarjetas.</p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {giftOptions.map((gift) => (
             <GiftCard key={gift.id} gift={gift} quantity={quantities[gift.id] ?? 0} onChange={(quantity) => setQuantities((prev) => ({ ...prev, [gift.id]: quantity }))} />
           ))}
@@ -69,7 +90,7 @@ export function CheckoutForm() {
 
         <form onSubmit={handleSubmit} className="ticket-edge mt-12 overflow-hidden rounded-[2rem] border border-navy/10 bg-ivory shadow-ticket">
           <div className="bg-navy px-6 py-5 text-white md:px-8">
-            <p className="text-[10px] font-bold uppercase tracking-[0.26em] text-gold-soft">Paso 2 · Revisa tus regalos</p>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-gold-soft">Paso 2 · Revisa tu selección</p>
             <h3 className="mt-1 font-serif text-2xl">Tu selección</h3>
             {selected.length === 0 ? <p className="mt-3 text-sm text-white/75">Todavía no has agregado regalos. Elige uno o varios arriba.</p> : (
               <ul className="mt-4 divide-y divide-white/15 text-sm">
@@ -91,7 +112,7 @@ export function CheckoutForm() {
             <div className="p-6 md:p-8 lg:p-10">
               <div className="flex items-center gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">3</span>
-                <h3 className="font-serif text-2xl text-navy">Tus datos y mensaje</h3>
+                <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-gold">Paso 3</p><h3 className="font-serif text-2xl text-navy">Completa tus datos</h3></div>
               </div>
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <label className="block">
@@ -113,7 +134,7 @@ export function CheckoutForm() {
             <div className="border-t border-dashed border-navy/15 bg-paper/70 p-6 md:p-8 lg:border-l lg:border-t-0 lg:p-10">
               <div className="flex items-center gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold text-xs font-bold text-white">4</span>
-                <h3 className="font-serif text-2xl text-navy">Paga con tu tarjeta</h3>
+                <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-gold">Paso 4</p><h3 className="font-serif text-2xl text-navy">Continúa al pago seguro</h3></div>
               </div>
               <div className="mt-6 rounded-2xl border border-gold/30 bg-white p-5">
                 <div className="flex items-start justify-between gap-3">
