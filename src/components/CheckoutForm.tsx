@@ -117,7 +117,7 @@ export function CheckoutForm() {
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <label className="block">
                   <span className="text-sm font-bold text-ink/70">Nombre</span>
-                  <input required autoComplete="name" maxLength={120} className="mt-2 w-full rounded-2xl border border-navy/15 bg-white px-4 py-3.5 outline-none focus:border-gold focus:ring-4 focus:ring-gold/10" value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Ej: María González" />
+                  <input required autoComplete="name" maxLength={120} className="mt-2 w-full rounded-2xl border border-navy/15 bg-white px-4 py-3.5 outline-none focus:border-gold focus:ring-4 focus:ring-gold/10" value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Arturo Vidal" />
                 </label>
                 <label className="block">
                   <span className="text-sm font-bold text-ink/70">Correo</span>
