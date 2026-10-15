@@ -40,11 +40,7 @@ export function WeddingCountdown() {
       <div className="pointer-events-none absolute left-5 top-4 font-serif text-4xl text-gold/15" aria-hidden="true">♡</div>
       <div className="pointer-events-none absolute bottom-3 right-6 font-serif text-5xl text-gold/15" aria-hidden="true">✧</div>
 
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-gold">Cada segundo cuenta ♡</p>
-      <h3 className="mt-3 font-serif text-2xl text-navy sm:text-3xl">¡Ya falta menos para nuestro gran día!</h3>
-      <p className="mt-2 text-sm text-ink/60">
-        <time dateTime="2027-02-26T18:00:00-03:00">26 de febrero de 2027 · 18:00 hrs (Chile)</time>
-      </p>
+      <h3 className="font-serif text-2xl text-navy sm:text-3xl">¡Ya falta menos para nuestro gran día!</h3>
 
       {remaining?.finished ? (
         <p role="status" className="relative mt-7 font-serif text-2xl italic text-navy sm:text-3xl">
