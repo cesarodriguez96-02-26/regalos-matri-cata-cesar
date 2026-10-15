@@ -48,7 +48,7 @@ export function CheckoutForm() {
   }
 
   return (
-    <section id="regalos" className="px-5 py-14 md:py-20">
+    <section id="regalos" className="scroll-mt-20 px-5 py-14 md:py-20">
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-gold">Nuestra lista de deseos</p>
