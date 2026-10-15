@@ -21,6 +21,13 @@ function MapPinIcon() {
   );
 }
 
+// WhatsApp abre la aplicación instalada cuando el dispositivo lo permite.
+// El mensaje queda redactado, pero el invitado debe enviarlo manualmente.
+function whatsappConfirmationUrl(phone: string, contact: string) {
+  const message = `¡Hola, ${contact}! 💛 Quiero confirmar asistencia al matrimonio de Cata y César del 26 de febrero de 2027. Nombre(s) de los invitados: ______. ¡Nos vemos para celebrar! 🥂`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+}
+
 const itinerary = [
   { time: '18:00', event: 'Recepción', icon: '♡' },
   { time: '18:30', event: 'Ceremonia', icon: '💍' },
@@ -153,8 +160,8 @@ export default function Home() {
                 <h3 className="font-serif text-2xl text-navy">Confirma tu asistencia</h3>
                 <p className="mt-2 text-sm leading-6 text-ink/60">Avísanos por WhatsApp hasta el 20 de diciembre de 2026 para reservar tu lugar en este viaje.</p>
                 <div className="mt-5 flex flex-wrap justify-center gap-3">
-                  <a href="https://wa.me/56987042305" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> Cata · +56 9 8704 2305</a>
-                  <a href="https://wa.me/56976679136" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> César · +56 9 7667 9136</a>
+                  <a href={whatsappConfirmationUrl("56987042305", "Cata")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> Cata · +56 9 8704 2305</a>
+                  <a href={whatsappConfirmationUrl("56976679136", "César")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> César · +56 9 7667 9136</a>
                 </div>
                 <WeddingCountdown />
               </div>
