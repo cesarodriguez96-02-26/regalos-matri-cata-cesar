@@ -68,6 +68,17 @@ body {
   transform: translateY(-58%) rotate(4deg);
 }
 
+
+/* La navegación horizontal se mantiene limpia en pantallas estrechas. */
+.section-nav-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.section-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
