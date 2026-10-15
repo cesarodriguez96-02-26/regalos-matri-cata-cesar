@@ -105,7 +105,7 @@ export default function Home() {
           <div className="mx-auto mb-9 max-w-3xl text-center">
             <p className="text-xs font-bold uppercase tracking-[0.35em] text-gold">Tarjeta de embarque</p>
             <h2 id="proxima-aventura" className="mt-3 font-serif text-4xl text-navy md:text-5xl">Nuestra próxima aventura</h2>
-            <p className="mt-4 text-base leading-7 text-ink/70">En nuestra próxima aventura. ¡Lo importante es celebrar juntos! Aquí tienes todos los detalles para acompañarnos.</p>
+            <p className="mt-4 text-base leading-7 text-ink/70">¡Lo importante es celebrar juntos! Aquí tienes todos los detalles para acompañarnos.</p>
           </div>
           <div className="ticket-edge overflow-hidden rounded-[2rem] border border-navy/10 bg-ivory shadow-ticket">
             <div className="grid gap-6 bg-navy px-6 py-8 text-white sm:grid-cols-3 sm:px-10">
@@ -152,7 +152,7 @@ export default function Home() {
               </div>
               <div className="mt-9 border-t border-dashed border-navy/20 pt-8 text-center">
                 <h3 className="font-serif text-2xl text-navy">Confirma tu asistencia</h3>
-                <p className="mt-2 text-sm leading-6 text-ink/60">Avísanos por WhatsApp para reservar tu lugar en este viaje.</p>
+                <p className="mt-2 text-sm leading-6 text-ink/60">Confirma tu asistencia hasta el 20 de diciembre de 2026. Avísanos por WhatsApp para reservar tu lugar en este viaje.</p>
                 <div className="mt-5 flex flex-wrap justify-center gap-3">
                   <a href="https://wa.me/56987042305" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> Cata · +56 9 8704 2305</a>
                   <a href="https://wa.me/56976679136" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> César · +56 9 7667 9136</a>
@@ -168,9 +168,8 @@ export default function Home() {
 
       <footer className="px-5 pb-14 pt-6 text-center">
         <div className="mx-auto max-w-2xl border-t border-navy/10 pt-9">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-gold">Gracias por ser parte de nuestra historia</p>
           <p className="mt-3 font-serif text-3xl italic text-navy">Cata &amp; César</p>
-          <p className="mt-3 text-sm leading-6 text-ink/60">26 de febrero de 2027 · Santa Luz de Chicureo</p>
+          <p className="mt-3 text-sm leading-6 text-ink/60">26 de febrero de 2027</p>
         </div>
       </footer>
     </main>
