@@ -54,7 +54,7 @@ export function CheckoutForm() {
           <p className="text-xs font-bold uppercase tracking-[0.35em] text-gold">Nuestra lista de deseos</p>
           <h2 className="mt-3 font-serif text-4xl text-navy md:text-5xl">Gracias por ser parte de nuestra aventura</h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-ink/75">
-            El regalo que más ilusión nos hace es compartir este día contigo. Si además quieres hacernos un obsequio simbólico para nuestro nuevo capítulo juntos, te dejamos nuestra lista de deseos.
+            El regalo que más ilusión nos hace es compartir este día contigo. Si además quieres hacernos un obsequio simbólico para nuestra próxima aventura juntos, te dejamos nuestra lista de deseos.
           </p>
           <div className="mt-7 rounded-[1.75rem] border border-gold/25 bg-ivory p-5 text-left sm:p-7">
             <h3 className="text-center font-serif text-2xl text-navy">¿Cómo funciona?</h3>
