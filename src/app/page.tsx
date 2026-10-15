@@ -72,7 +72,7 @@ export default function Home() {
                 <div className="mx-auto mt-5 max-w-[43rem] space-y-3 text-left text-base leading-6 text-ink/80 sm:text-center md:space-y-4 md:text-lg md:leading-7">
                   <p>Nuestra historia comenzó en <strong className="font-semibold text-navy">junio de 2022</strong>, cuando nuestros caminos se cruzaron casi sin aviso, pero con la sensación de que algo muy bonito estaba por empezar.</p>
                   <p>Desde entonces, hemos crecido juntos, compartido risas, descubierto nuevos lugares y llenado nuestra vida de momentos que hoy forman parte de lo que somos. Cada viaje, cada celebración y cada desafío nos ha confirmado que queremos seguir eligiéndonos.</p>
-                  <p>Hoy estamos listos para escribir el capítulo más importante de nuestra historia: <strong className="font-semibold text-navy">nuestro matrimonio</strong>. Y no imaginamos este momento sin las personas que más queremos.</p>
+                  <p>Hoy estamos listos para iniciar el viaje más importante de nuestras vidas: <strong className="font-semibold text-navy">nuestro matrimonio</strong>. Y no imaginamos este momento sin las personas que más queremos.</p>
                   <p>Por eso, nos haría muchísima ilusión que nos acompañaran a celebrar el amor, brindar por todo lo que viene y <span className="font-semibold text-navy">bailar juntos hasta que se acabe la noche</span>.</p>
                 </div>
                 <p className="mt-9 font-serif text-2xl italic text-gold">Con cariño, Cata &amp; César ♡</p>
