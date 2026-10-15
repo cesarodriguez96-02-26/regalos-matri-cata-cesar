@@ -149,7 +149,7 @@ export default function Home() {
               </div>
               <div className="mt-9 border-t border-dashed border-navy/20 pt-8 text-center">
                 <h3 className="font-serif text-2xl text-navy">Confirma tu asistencia</h3>
-                <p className="mt-2 text-sm leading-6 text-ink/60">Avísanos por WhatsApp para reservarte tu lugar en este viaje.</p>
+                <p className="mt-2 text-sm leading-6 text-ink/60">Avísanos por WhatsApp para reservar tu lugar en este viaje.</p>
                 <div className="mt-5 flex flex-wrap justify-center gap-3">
                   <a href="https://wa.me/56987042305" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> Cata · +56 9 8704 2305</a>
                   <a href="https://wa.me/56976679136" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white px-5 py-3 text-sm font-bold text-navy transition hover:border-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"><WhatsAppIcon /> César · +56 9 7667 9136</a>
