@@ -24,7 +24,15 @@ function MapPinIcon() {
 // WhatsApp abre la aplicación instalada cuando el dispositivo lo permite.
 // El mensaje queda redactado, pero el invitado debe enviarlo manualmente.
 function whatsappConfirmationUrl(phone: string, contact: string) {
-  const message = `¡Hola, ${contact}! 💛 Quiero confirmar asistencia al matrimonio de Cata y César del 26 de febrero de 2027. Nombre(s) de los invitados: ______. ¡Nos vemos para celebrar! 🥂`;
+  const message = [
+    `¡Hola, ${contact}! 💛`,
+    'Quiero confirmar asistencia a su matri!',
+    'Nombre(s) de los invitados:',
+    '',
+    'Alergias o régimen alimenticios:',
+    '',
+    '¡Nos vemos para celebrar! 🥂'
+  ].join('\n');
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
