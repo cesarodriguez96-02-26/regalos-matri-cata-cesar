@@ -78,7 +78,7 @@ export async function sendGiftConfirmedEmails(input: {
         <p>Tu aporte de <strong>${formatCLP(input.amount)}</strong> será parte de un recuerdo muy especial de nuestra próxima aventura.</p>
         ${message ? `<p><strong>Tu mensaje:</strong><br>${message}</p>` : ''}
         <p>Gracias por acompañarnos en este momento tan importante.</p>
-        <p style="font-family:Georgia,serif;font-size:22px;color:#0A3456">Con cariño,<br>${escapeHtml(couple)}</p>
+        <p style="font-family:Georgia,serif;font-size:22px;color:#0A3456">Con cariño,<br>Cata &amp; Cesar</p>
       </div>
     `
   });
