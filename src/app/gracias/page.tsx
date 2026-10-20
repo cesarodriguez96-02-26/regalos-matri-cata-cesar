@@ -7,7 +7,7 @@ const contentByStatus = {
     icon: '♥',
     eyebrow: 'Regalo confirmado',
     title: '¡Muchas gracias!',
-    message: 'Tu pago fue aprobado correctamente. Guardaremos tu regalo y tu mensaje como parte de esta aventura que estamos comenzando.',
+    message: 'Tu pago fue aprobado correctamente. Atesoraremos tu deseo como parte fundamental del inicio de esta aventura.',
     buttonText: 'Volver a nuestra lista'
   },
   failed: {
