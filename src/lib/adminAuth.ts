@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 
 export const ADMIN_COOKIE_NAME = 'cata_cesar_admin';
 export const ADMIN_SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 días
+export const ADMIN_MIN_PASSWORD_LENGTH = 10;
 
 function adminSecret() {
   return process.env.ADMIN_PASSWORD ?? '';
@@ -18,12 +19,12 @@ function signature(expiresAt: string) {
 }
 
 export function isAdminPasswordConfigured() {
-  return adminSecret().length >= 16;
+  return adminSecret().length >= ADMIN_MIN_PASSWORD_LENGTH;
 }
 
 export function verifyAdminPassword(candidate: string) {
   const secret = adminSecret();
-  return secret.length >= 16 && safeEqual(candidate, secret);
+  return secret.length >= ADMIN_MIN_PASSWORD_LENGTH && safeEqual(candidate, secret);
 }
 
 export function createAdminSessionValue() {
